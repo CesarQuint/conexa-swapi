@@ -39,7 +39,7 @@ export class FilmsRepository {
     const inserts: Partial<FilmDocument>[] = [];
 
     for (const film of films) {
-      const persistence = FilmMapper.toPersistance(film);
+      const persistence = FilmMapper.toPersistence(film);
 
       if (existingIds.has(film.episodeId)) {
         const { _id, ...withoutId } = persistence;
