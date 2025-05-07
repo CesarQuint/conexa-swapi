@@ -18,7 +18,6 @@ export class User extends Entity<UserProps> {
     return this.props.email;
   }
 
-  //????? Think About it
   get password(): UserProps['password'] {
     return this.props.password;
   }
