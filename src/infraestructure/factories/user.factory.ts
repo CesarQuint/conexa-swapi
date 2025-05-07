@@ -3,8 +3,6 @@ import { User } from 'src/domain/entities/user.entity';
 import { UserRoles } from '../schemas/user.schema';
 import { Password } from 'src/domain/value-objects/password.vo';
 
-import { SignUpAccountDto } from 'src/interfaces/dto/sign-up.request.dto';
-
 export class BuildUserProps {
   email: string;
   password: string;
@@ -20,7 +18,7 @@ export class UserFactory {
     email,
     password,
     confirmPassword,
-    role = UserRoles.USER,
+    role = UserRoles.REGULAR,
   }: BuildUserProps): Promise<User> {
     Password.comparePasswords(password, confirmPassword);
     Password.validate(password);
