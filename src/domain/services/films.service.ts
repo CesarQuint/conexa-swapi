@@ -8,27 +8,29 @@ import { FilmsRepository } from 'src/infraestructure/repositories/films.reposito
 import { CreateFilmDto } from 'src/interfaces/dto/create-film.request.dto';
 import { UpdateFilmDto } from 'src/interfaces/dto/update-film.request.dto';
 import { Film } from '../entities/film.entity';
+import { FilmResponseDto } from 'src/interfaces/dto/get-all-films.response.dto';
+import { FilmsServiceMapper } from '../mappers/films-service.mapper';
 
 @Injectable()
 export class FilmsService {
   constructor(private readonly filmsRepository: FilmsRepository) {}
 
-  async getAllFilmsData() {
+  async getAllFilmsData(): Promise<FilmResponseDto[]> {
     const films = await this.filmsRepository.findAll();
     if (!films) throw new NotFoundException('Not films found.');
 
-    return films;
+    return films.map((film) => FilmsServiceMapper.toResponse(film));
   }
 
-  async getFilmData(filmId: string) {
+  async getFilmData(filmId: string): Promise<FilmResponseDto> {
     const FilmId = new Types.ObjectId(filmId);
     const film = await this.filmsRepository.findById(FilmId);
     if (!film) throw new NotFoundException('Film not found.');
 
-    return film;
+    return FilmsServiceMapper.toResponse(film);
   }
 
-  async createFilm(createFilmDto: CreateFilmDto) {
+  async createFilm(createFilmDto: CreateFilmDto): Promise<FilmResponseDto> {
     const film = await this.filmsRepository.findByEpisode(
       createFilmDto.episodeId,
     );
@@ -42,10 +44,17 @@ export class FilmsService {
 
     await this.filmsRepository.save(newFilm);
 
-    return await this.filmsRepository.findById(newFilm.id);
+    const filmCreated = await this.filmsRepository.findById(newFilm.id);
+
+    if (!filmCreated) throw new NotFoundException('Film not found ');
+
+    return FilmsServiceMapper.toResponse(filmCreated);
   }
 
-  async updateFilm(filmId: string, updateFilmDto: UpdateFilmDto) {
+  async updateFilm(
+    filmId: string,
+    updateFilmDto: UpdateFilmDto,
+  ): Promise<FilmResponseDto> {
     const FilmId = new Types.ObjectId(filmId);
     const film = await this.filmsRepository.findById(FilmId);
 
@@ -73,7 +82,11 @@ export class FilmsService {
 
     await this.filmsRepository.save(newFilm);
 
-    return await this.filmsRepository.findById(newFilm.id);
+    const filmCreated = await this.filmsRepository.findById(newFilm.id);
+
+    if (!filmCreated) throw new NotFoundException('Film not found ');
+
+    return FilmsServiceMapper.toResponse(filmCreated);
   }
 
   async deleteFilm(filmId: string) {
