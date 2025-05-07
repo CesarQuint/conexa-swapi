@@ -2,7 +2,7 @@ import { Film } from 'src/domain/entities/film.entity';
 import { FilmDocument } from '../schemas/films.schema';
 
 export class FilmMapper {
-  static toPersistance(film: Film): Partial<FilmDocument> {
+  static toPersistence(film: Film): Partial<FilmDocument> {
     return {
       _id: film.id,
       episode_id: film.episodeId,

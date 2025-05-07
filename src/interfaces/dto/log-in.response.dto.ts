@@ -1,0 +1,3 @@
+interface LogInResponseDto {
+  token: string;
+}
