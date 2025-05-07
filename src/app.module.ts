@@ -6,19 +6,12 @@ import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { FilmsModule } from './modules/films.module';
+import { AccountModule } from './modules/account.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-    }),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        global: true,
-        secret: configService.get<string>('JWT_SECRET_KEY'),
-      }),
-      inject: [ConfigService],
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -27,6 +20,7 @@ import { FilmsModule } from './modules/films.module';
       }),
       inject: [ConfigService],
     }),
+    AccountModule,
     FilmsModule,
   ],
   controllers: [AppController],
