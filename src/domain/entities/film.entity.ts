@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 import { Entity } from 'src/infraestructure/primitives/entity';
 
-interface FilmProps {
+export interface FilmProps {
   episodeId: number;
   title: string;
   openingCrawl: string;

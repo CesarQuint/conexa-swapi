@@ -21,4 +21,26 @@ export class FilmMapper {
       edited: film.edited,
     };
   }
+
+  static fromPersistance(doc: FilmDocument): Film {
+    return new Film(
+      {
+        episodeId: doc.episode_id,
+        title: doc.title,
+        openingCrawl: doc.opening_crawl,
+        director: doc.director,
+        producer: doc.producer,
+        releaseDate: doc.release_date,
+        characters: doc.characters,
+        planets: doc.planets,
+        starships: doc.starships,
+        vehicles: doc.vehicles,
+        species: doc.species,
+        url: doc.url,
+        created: doc.created,
+        edited: doc.edited,
+      },
+      doc._id,
+    );
+  }
 }

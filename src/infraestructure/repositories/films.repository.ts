@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilmDocument, FilmModel } from '../schemas/films.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Film } from 'src/domain/entities/film.entity';
 import { FilmMapper } from '../mappers/films.mapper';
 
@@ -19,13 +19,36 @@ export class FilmsRepository {
     private readonly filmModel: Model<FilmDocument>,
   ) {}
 
-  async findById() {}
+  async findById(id: Types.ObjectId): Promise<Film | null> {
+    const film = await this.filmModel.findById(id).exec();
+    return film ? FilmMapper.fromPersistance(film) : null;
+  }
 
-  async findAll() {}
+  async findByEpisode(episode_id: number): Promise<Film | null> {
+    const film = await this.filmModel.findOne({ episode_id }).exec();
+    return film ? FilmMapper.fromPersistance(film) : null;
+  }
 
-  async save() {}
+  async findAll(): Promise<Film[] | null> {
+    const films = await this.filmModel.find().exec();
+    return films.length
+      ? films.map((film) => FilmMapper.fromPersistance(film))
+      : null;
+  }
 
-  async delete() {}
+  async save(film: Film) {
+    const data = FilmMapper.toPersistence(film);
+    let record = await this.filmModel.findById(film.id).exec();
+
+    if (record) Object.assign(record, data);
+    else record = new this.filmModel(data);
+
+    await record.save();
+  }
+
+  async delete(filmId: Types.ObjectId) {
+    await this.filmModel.findByIdAndDelete(filmId).exec();
+  }
 
   async saveMany(films: Film[]) {
     const episodeIds = films.map((film) => film.episodeId);

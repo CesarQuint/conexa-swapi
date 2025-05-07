@@ -1,67 +1,78 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
+export interface JwtUserPayload {
+  sub: string;
+  email: string;
+  role: string;
+}
+
 declare global {
   namespace Express {
     interface Request {
-      user?: JwtPayload | string;
+      user?: JwtUserPayload;
     }
   }
 }
 
-export function validateToken(req: Request, res: Response, next: NextFunction) {
-  const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return res.status(401).json({
-      error: 'Access denied',
-      message: 'Authorization header is missing',
-    });
-  }
-
-  if (!authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({
-      error: 'Access denied',
-      message: 'Invalid authorization format. Use Bearer {token}',
-    });
-  }
-
-  const token = authHeader.split(' ')[1];
-
-  try {
-    const jwtSecretKey = process.env.JWT_SECRET_KEY;
-
-    if (!jwtSecretKey) {
-      console.error(
-        'JWT_SECRET_KEY is not configured in environment variables',
-      );
-      return res.status(500).json({
-        error: 'Internal server error',
-        message: 'Authentication configuration error',
+export class JwtMiddleware {
+  use(req: Request, res: Response, next: NextFunction): void {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      res.status(401).json({
+        error: 'Access denied',
+        message: 'Authorization header is missing',
       });
+      return;
     }
 
-    const decoded = jwt.verify(token, jwtSecretKey);
+    if (!authHeader.startsWith('Bearer ')) {
+      res.status(401).json({
+        error: 'Access denied',
+        message: 'Invalid authorization format. Use Bearer {token}',
+      });
+      return;
+    }
 
-    req.user = decoded;
+    const token = authHeader.split(' ')[1];
 
-    next();
-  } catch (error) {
-    if (error instanceof jwt.TokenExpiredError) {
-      return res.status(401).json({
-        error: 'Unauthorized',
-        message: 'Token has expired',
-      });
-    } else if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({
-        error: 'Unauthorized',
-        message: 'Invalid token',
-      });
-    } else {
-      console.error('JWT verification error:', error);
-      return res.status(500).json({
-        error: 'Internal Server Error',
-        message: 'An error occurred during authentication',
-      });
+    try {
+      const jwtSecretKey = process.env.JWT_SECRET;
+
+      if (!jwtSecretKey) {
+        console.error('JWT_SECRET is not configured in environment variables');
+        res.status(500).json({
+          error: 'Internal server error',
+          message: 'Authentication configuration error',
+        });
+        return;
+      }
+
+      const decoded = jwt.verify(token, jwtSecretKey) as JwtUserPayload;
+
+      req.user = decoded;
+
+      next();
+    } catch (error) {
+      if (error instanceof jwt.TokenExpiredError) {
+        res.status(401).json({
+          error: 'Unauthorized',
+          message: 'Token has expired',
+        });
+        return;
+      } else if (error instanceof jwt.JsonWebTokenError) {
+        res.status(401).json({
+          error: 'Unauthorized',
+          message: 'Invalid token',
+        });
+        return;
+      } else {
+        res.status(500).json({
+          error: 'Internal Server Error',
+          message: 'An error occurred during authentication',
+        });
+        return;
+      }
     }
   }
 }
