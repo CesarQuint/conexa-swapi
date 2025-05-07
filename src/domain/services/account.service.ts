@@ -9,6 +9,7 @@ import { UserRoles } from 'src/infraestructure/schemas/user.schema';
 import { LogInAccountDto } from 'src/interfaces/dto/log-in.request.dto';
 import { SignUpAccountDto } from 'src/interfaces/dto/sign-up.request.dto';
 import { JwtService } from '@nestjs/jwt';
+import { LogInResponseDto } from 'src/interfaces/dto/log-in.response.dto';
 
 @Injectable()
 export class AccountService {
