@@ -10,7 +10,6 @@ services:
       - '3000:3000'
     volumes:
       - .:/usr/src/app
-    depends_on:
-      - mongodb
+
     restart: always
     command: sh -c "node dist/setup.js && npm run start:prod"
