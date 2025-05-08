@@ -55,6 +55,7 @@ npm run start:prod
 
 The API is fully documented with Swagger.
 Visit: http://localhost:3000/api
+Production https://conexa-swapi.onrender.com/api
 
 ## Test Jest
 
