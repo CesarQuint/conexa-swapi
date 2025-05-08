@@ -19,7 +19,7 @@ A RESTful API built with [NestJS] for managing Star Wars films. This API include
 ```bash
 # Clone the repository
 git clone https://github.com/CesarQuint/conexa-swapi
-cd nestjs-films-api
+cd conexa-swapi
 
 # Install dependencies
 npm install
