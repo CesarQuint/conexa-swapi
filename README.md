@@ -55,3 +55,12 @@ npm run start:prod
 
 The API is fully documented with Swagger.
 Visit: http://localhost:3000/api
+
+## Test Jest
+
+This project has tests for controller and services
+To run them use this command
+
+```bash
+npm run test
+```
