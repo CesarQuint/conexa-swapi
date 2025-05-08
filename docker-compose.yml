@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: conexa-swapi
+    env_file:
+      - .env
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/usr/src/app
+
+    restart: always
+    command: sh -c "node dist/setup.js && npm run start:prod"
