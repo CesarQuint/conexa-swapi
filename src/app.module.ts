@@ -4,9 +4,9 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { ConfigService } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
 import { FilmsModule } from './modules/films.module';
 import { AccountModule } from './modules/account.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -20,6 +20,7 @@ import { AccountModule } from './modules/account.module';
       }),
       inject: [ConfigService],
     }),
+    ScheduleModule.forRoot({}),
     AccountModule,
     FilmsModule,
   ],

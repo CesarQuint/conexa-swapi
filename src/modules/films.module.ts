@@ -2,6 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FilmsService } from 'src/domain/services/films.service';
+import { FilmsSyncService } from 'src/domain/services/films.sync.service';
 import { SwapiService } from 'src/domain/services/swapi.service';
 import { FilmsRepository } from 'src/infraestructure/repositories/films.repository';
 
@@ -19,7 +20,13 @@ import { JwtMiddleware } from 'src/middlewares/authentication.middleware';
     MongooseModule.forFeature([{ name: FilmModel.name, schema: FilmSchema }]),
   ],
   controllers: [FilmsController],
-  providers: [FilmsRepository, SwapiService, FilmSeeder, FilmsService],
+  providers: [
+    FilmsRepository,
+    SwapiService,
+    FilmSeeder,
+    FilmsService,
+    FilmsSyncService,
+  ],
 })
 export class FilmsModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
